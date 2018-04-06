@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RPS-Multiplayer</title>
+  <script src="https://www.gstatic.com/firebasejs/4.12.1/firebase.js"></script>
+  <link rel="stylesheet" type="text/css" href="assets/css/style.css">
+</head>
+<body>
+  <title>Rock Paper Scissors</title>
+  <div id="instructions"></div>
+  <div id="statsAndSignIn">
+    <input type="text" name="name" placeholder="Name" id="nameVal">
+    <input type="submit" value="Submit" id="submitBtn">
+  </div>
+  <div id="gameWrapper">
+    <div id="player1Box"></div>
+    <div id="resultsBox"></div>
+    <div id="player2Box"></div>
+  </div>
+  <div id="chatBox">
+
+
+    <div id='chatDiv' class="chatWrapper"></div>
+    <hr />
+
+    <label>Chat
+      <textarea id='chatInput' placeholder='Type Message Here'></textarea>
+    </label>
+    <input type="submit" value="Submit" id="chatBtn">
+
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+  crossorigin="anonymous"></script>
+
+  <script src="assets/javascript/main.js"></script>
+</body>
+</html>

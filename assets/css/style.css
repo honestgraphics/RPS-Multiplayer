@@ -1,0 +1,46 @@
+/* body {
+
+} */
+
+#gameWrapper {
+  display: inline-block;
+}
+
+#player1Box {
+  height: 250px;
+  width: 250px;
+  border: 1px solid black;
+  display: inline-block;
+}
+
+#resultsBox {
+  height: 250px;
+  width: 250px;
+  border: 1px solid black;
+  display: inline-block;
+}
+
+#player2Box {
+  height: 250px;
+  width: 250px;
+  border: 1px solid black;
+  display: inline-block;
+}
+
+form{
+  max-width: 500px;
+  margin: 10px auto;
+  border: 1px solid #ccc;
+}
+.chatWrapper{
+  max-height: 250px;
+  overflow: auto;
+}
+.chatWrapper em{
+  font-size: 15px;
+  padding-right: 20px;
+  font-weight: bold;
+}
+.chatWrapper div{
+  font-size: 16px
+}
