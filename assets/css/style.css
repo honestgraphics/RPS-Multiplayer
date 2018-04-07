@@ -2,6 +2,10 @@
 
 } */
 
+.choices {
+  width: 150px;
+}
+
 #gameWrapper {
   display: inline-block;
 }
@@ -10,20 +14,34 @@
   height: 250px;
   width: 250px;
   border: 1px solid black;
+  border-radius: 10px;
+  background-color: black;
+  color: white;
+  text-align: center;
   display: inline-block;
+  margin-right: 20px;
 }
 
 #resultsBox {
   height: 250px;
   width: 250px;
   border: 1px solid black;
+  background-color: black;
+  color: white;
+  text-align: center;
+  border-radius: 10px;
   display: inline-block;
+  margin-right: 20px;
 }
 
 #player2Box {
   height: 250px;
   width: 250px;
   border: 1px solid black;
+  background-color: black;
+  color: white;
+  text-align: center;
+  border-radius: 10px;
   display: inline-block;
 }
 
