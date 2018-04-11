@@ -12,6 +12,7 @@ $(document).ready(function () {
   firebase.initializeApp(config);
 
   ///SET LOCAL VARIABLES
+  var playerName;
   var player1Exist = false;
   var player2Exist = false;
   var playerNum;
@@ -35,36 +36,60 @@ $(document).ready(function () {
 
   ///FIREBASE WATCHER... - listening for changes in database
   database.ref("players").on("value", function (snapshot) {
+    console.log('new player change');
     //IF PLAYER 1 EXISTS
-    // console.log(snapshot);
     if (snapshot.child("1").exists()) {
-      console.log('snapshot.child("1").val()', snapshot.child("1").val());
-      console.log("player 1 is in")
-      //tells chat that player 1 has left chat
-      if(!player1Exist && playerNum === 2) $('#chat').append('<p><span>Player 1</span>' + ' has connected.' + '</p>');
+      // player one is present
+      if(!player1Exist && playerNum === 2) {
+        $('#chat').append('<p><span>Player 1</span> has connected.</p>');
+        console.log("player 1 just looged in");
+      }
+      console.log("player 1 is present");
       player1Exist = true;
+
+      // check if player 1 made a choice
+      var playerData = snapshot.child("1").val();
+      if (choice in playerData) {
+        // player 1 made a choice get player 1's choice
+        // remove the choice from player 1
+        delete playerData.choice;
+        // set turn to player 2
+        // update player boxes 
+      }
+
+      // ??? do we really want to clear box here
       $("#player1Box").empty();
       $("#player1Box").append("<p>" + snapshot.child("1").val().username + "  </p>");
     } else {
-      //tells chat that player 1 has left chat
-      if(player1Exist && playerNum === 2) $('#chat').append('<p><span>Player 1</span>' + ' has disconnected.' + '</p>');
+      // player 1 is not present
+      if(player1Exist && playerNum === 2) {
+        $('#chat').append('<p><span>Player 1</span>' + ' has disconnected.' + '</p>');
+        $("#player1Box").empty();
+        $("#player1Box").append("<p>Waiting for Other Player.</p>");
+      }
       player1Exist = false;
-      $("#player1Box").empty();
       isPlay = false;
     }
     //IF PLAYER 2 EXISTS
     if (snapshot.child("2").exists()) {
-      //tells chat that player 1 has left chat
-      if(!player2Exist && playerNum === 1) $('#chat').append('<p><span>Player 2</span>' + ' has connected.' + '</p>');
+      //player two is present
+      if(!player2Exist && playerNum === 1) {
+        $('#chat').append('<p><span>Player 2</span> has connected.</p>');
+        console.log("player 2 just looged in");
+      }
+      console.log("player 1 is present");
       player2Exist = true;
-      //$("#player2Box").empty();
-      console.log("about to append player 2", snapshot.child("2").val().username);
+
+      $("#player2Box").empty()
       $("#player2Box").append("<p>" + snapshot.child("2").val().username + "  </p>");
     } else {
       //tells chat that player 1 has left chat
-      if(player2Exist && playerNum === 1) $('#chat').append('<p><span>Player 2</span>' + ' has disconnected.' + '</p>');
-      player2Exist = false;
-      $("#player2Box").empty();
+      if(player2Exist && playerNum === 1) { 
+        $('#chat').append('<p><span>Player 2</span>' + ' has disconnected.' + '</p>');
+        $("#player2Box").empty();
+        $("#player2Box").append("<p>Waiting for Other Player.</p>");
+      }
+    player2Exist = false;
       isPlay = false;
 
     }
@@ -84,6 +109,31 @@ $(document).ready(function () {
     console.log("chat: ", snapshot.val());
     displayChattext(snapshot.val().time, snapshot.val().username, snapshot.val().text);
   })
+
+  
+
+
+  //append game choices function to be called later (puts images into boxes)
+  function appendGameChoices() {
+    console.log("appendGameChoices: player is Player " + playerNum);
+    console.log("appendGameChoices: turn is Player " + turn);
+
+    var box = $("#player" + turn + "Box");
+    // if turn === playerNum show the choices
+    if(turn === playerNum) {
+      for (var i = 0; i < imgArray.length; i++) {
+        box.append('<img class="choices" src="' + imgArray[i] + '"/>');
+      }
+      if(playerNum == 2){
+
+      }
+    }
+    else {
+      // show waiting message
+      box.append("<h2>Waiting for Player "+ turn + "</h2>");
+      console.log('waiting message here');
+    }
+  }
 
   ///////////////////////////////////////
   ///////////////////////////////////////
@@ -146,14 +196,6 @@ $(document).ready(function () {
     // event.preventDefault();
   });
 
-  //append game choices function to be called later (puts images into boxes)
-  function appendGameChoices() {
-    var box = $("#player" + turn + "Box");
-    for (var i = 0; i < imgArray.length; i++) {
-      box.append('<img class="choices" src="' + imgArray[i] + '"/>');
-    }
-  }
-
   //signs into game
   function signIn(user) {
     let userObject = {
@@ -164,12 +206,15 @@ $(document).ready(function () {
     };
     if (player1Exist == false) {
       playerNum = 1;
+      console.log("logging in as Player 1");
       //ADDS PLAYER 1 WHEN SIGN ON
       database.ref('/players/' + 1).update(userObject);
       // appendGameChoices(1);
       //console.log
       // REMOVES PLAYER WHEN TAB CLOSES
       database.ref('players/' + 1).onDisconnect().remove();
+      $("#player2Box").empty();
+      $("#player2Box").append("<p>Waiting for Other Player.</p>");
       //removes player 1 chat on disconnect
       database.ref('chat/' + 1).onDisconnect().remove();
 
@@ -181,34 +226,17 @@ $(document).ready(function () {
 
     } else {
       if (player1Exist == true) {
+        console.log("logging in as Player 2");
         playerNum = 2;
         //ADDS PLAYER 2 WHEN PLAYER 1 ALREADY EXISTS
         database.ref('players/' + 2).update(userObject);
         // appendGameChoices(1);
-        // REMOVES PLAYER WHEN TAB CLOSES
+        // REMOVES PLAYER WHEN TAB CLOSES/PUTS UP NEW MESSAGE
         database.ref('players/' + 2).onDisconnect().remove();
         //removes player 2 chat on disconnect
         database.ref('chat/' + 2).onDisconnect().remove();
       }
     };
-
-
-    //append game choices function to be called later (puts images into boxes)
-    function appendGameChoices() {
-      var box = $("#player" + turn + "Box");
-      // if turn === playerNum show the choices
-      if(turn === playerNum) {
-        for (var i = 0; i < imgArray.length; i++) {
-          box.append('<img class="choices" src="' + imgArray[i] + '"/>');
-        }
-      }
-      else {
-        // show waiting message
-        box.append("<h2>Waiting for Player "+ playerNum + "</h2>");
-        console.log('waiting message here');
-      }
-
-    }
 
     //1st player choice onclick
     $("#player1Box").on("click", "img.choices", function (event) {
